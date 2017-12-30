@@ -5,7 +5,7 @@
 //user defined:
 var canvas_width = 200;
 var canvas_height = 200;
-//TODO canvas scaling
+var canvas_scale = 2.5;
 var init_spawn = 1000; //initial spawn number
 var spawn_per_update = 2;
 var framerate = 24;
@@ -19,6 +19,8 @@ function init() {
 	
 	c.width=canvas_width;
 	c.height=canvas_height;
+	c.style.width = canvas_width * canvas_scale + "px";
+	c.style.height = canvas_height * canvas_scale + "px";
 	
 	w = c.width;
 	h = c.height;
@@ -79,7 +81,7 @@ function put_pixel_i(pixels, i, r, g, b) {
 }
 
 function put_pixel_xy(pixels, x, y, r, g, b) {
-	put_pixel_i(pixels, xy2i(x, y), r, g, b); //rgba
+	put_pixel_i(pixels, xy2i(x, y), r, g, b);
 }
 
 function update_canvas() {
@@ -177,69 +179,11 @@ function update() {
 		pix[i] = pix_new[i];
 }
 
-function update3() {
-	pix_new = new Array(pix.length);
-	pix_new.fill(255);
-	
-	for (var i = 0; i < pix.length; i += 4) {
-		if(pix[i]==pix[i+1]==pix[i+2]==0) { //black
-			if(is_connected(i))
-				put_pixel_i(pix_new, i, 254, 0, 0);
-			else {
-				var dir;
-				do {
-					dir = rndi(4);
-				} while (!is_valid_idx(i, dir)); //TODO, check i taken! if no dir to go - stay in place
-				
-				var i_new;
-				switch(dir) {
-					case 0: i_new = i - w*4; break;
-					case 1: i_new = i + w*4; break;
-					case 2: i_new = i - 4; break;
-					case 3: i_new = i + 4; break;
-				}
-				
-				put_pixel_i(pix_new, i_new, 0, 0, 0);
-			}
-		}
-	}
-	
-	pix = pix_new.slice();
-	
-	update_canvas();
-}
-
-function update_old() {
-	//print("hi");
-	var imgd = ctx.getImageData(0, 0, ctx.canvas.clientWidth, ctx.canvas.clientHeight);
-	var pix = imgd.data;
-
-// Loop over each pixel and invert the color.
-for (var i = 0; i < pix.length; i += 4) {
-    pix[i  ] = 255 - pix[i  ]; // red
-    pix[i+1] = 255 - pix[i+1]; // green
-    pix[i+2] = 255 - pix[i+2]; // blue
-    // i+3 is alpha (the fourth element)
-}
-
-/*pix[0]=255;
-pix[1]=0;
-pix[2]=0;
-pix[3]=255;
-*/
-// Draw the ImageData at the given (x,y) coordinates.
-ctx.putImageData(imgd, 0, 0);
-
-/*ctx.beginPath();
-ctx.arc(50,50,40,0,2*Math.PI);
-ctx.stroke();*/
-}
-
 </script> 
 
 <body onload="init()">
 
-<canvas id="myCanvas" width="200" height="200" style="width:400px;height:400px;border:1px solid #d3d3d3;">
+<canvas id="myCanvas" width="200" height="200" style="border:1px solid #d3d3d3;">
 Your browser does not support the HTML5 canvas tag.</canvas>
 <!--<script>prep(); update();</script>-->
 
