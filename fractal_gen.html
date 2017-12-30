@@ -17,6 +17,32 @@ function init() {
 	c = document.getElementById("myCanvas");
 	ctx = c.getContext("2d");
 	
+	reset();
+	
+	window.setInterval(function(){
+		if(halt)
+			return;
+		
+		for(var i=0; i<updates_per_frame; i++)
+			update();
+		update_canvas();
+		
+	}, 1000/framerate);
+}
+
+function reset() {
+	halt = 0;
+	
+	//load user input
+	canvas_width = document.getElementById("in_w").value;
+	canvas_height = document.getElementById("in_h").value;
+	canvas_scale = document.getElementById("in_scale").value;
+	init_spawn = document.getElementById("in_ispawn").value;
+	spawn_per_update = document.getElementById("in_uspawn").value;
+	framerate = document.getElementById("in_framerate").value;
+	updates_per_frame = document.getElementById("in_updates").value;
+	
+	//(re)set internals
 	c.width=canvas_width;
 	c.height=canvas_height;
 	c.style.width = canvas_width * canvas_scale + "px";
@@ -32,17 +58,7 @@ function init() {
 	spawn(init_spawn); //spawn, TODO number
 	put_pixel_xy(pix, Math.floor(w/2), Math.floor(h/2), 254, 0, 0); //make central dot fixed
 	update_canvas();
-	ctx.scale(4,4);
 	
-	window.setInterval(function(){
-		if(halt)
-			return;
-		
-		for(var i=0; i<updates_per_frame; i++)
-			update();
-		update_canvas();
-		
-	}, 1000/framerate);
 }
 
 function rndi(max) {
@@ -182,6 +198,17 @@ function update() {
 </script> 
 
 <body onload="init()">
+
+<div>
+w:<input id="in_w" type="number" value="200" min="1" max="9999">
+h:<input id="in_h" type="number" value="200" min="1" max="9999">
+scale:<input id="in_scale" type="number" value="2.5" min="0.0" max="99" step="0.1">
+start:<input id="in_ispawn" type="number" value="1000" min="1" max="99999">
+spawn:<input id="in_uspawn" type="number" value="2" min="0" max="999">
+framerate:<input id="in_framerate" type="number" value="24" min="1" max="999">
+updates:<input id="in_updates" type="number" value="30" min="1" max="999">
+<input type="button" value="Reset" onclick="reset()">
+</div><br>
 
 <canvas id="myCanvas" width="200" height="200" style="border:1px solid #d3d3d3;">
 Your browser does not support the HTML5 canvas tag.</canvas>
